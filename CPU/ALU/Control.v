@@ -15,9 +15,10 @@ always @(*)
         2'b00:      oALUControl <= OPADD;
         2'b01:      oALUControl <= OPNULL;
         default:
-            case (iOPCODE)
-                
-            endcase
+				oALUControl <= FOPNULL;
+            /*case (iOPCODE)
+                oALUControl <= FOPNULL;
+            endcase*/
     endcase
 
 endmodule

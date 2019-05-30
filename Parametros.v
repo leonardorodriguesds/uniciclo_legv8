@@ -6,7 +6,10 @@ Igor Figueira Pinheiro da Silva 			- 15/0129921
 Gabriel Patrick Alcântara Mourão 		- 15/0126701
 Gabriel dos Santos Martins 				- 15/0126298
 João Gabriel Lima Neves 					- 15/0131992
-Tiago Rodrigues da Cunha Cabral 			- 15/0150296	
+Tiago Rodrigues da Cunha Cabral 			- 15/0150296
+
+2019/01
+Leonardo Rodrigues de Souza 				- 17/0060543
 	
 
  Adaptado para a placa de desenvolvimento DE1-SoC.
@@ -28,8 +31,6 @@ Tiago Rodrigues da Cunha Cabral 			- 15/0150296
 //`define RV32I
 //`define RV32IM
 `define RV32IMF
-
-
 `ifndef PARAM
 `define PARAM
 
@@ -83,8 +84,47 @@ parameter
 	FOPCVTSWU   = 5'd17,
 	FOPCVTWUS   = 5'd18,
 	FOPNULL		= 5'd31, // saída EEEEEEEE
+	
+/*====================================[OPCODES]====================================*/
+    OPC_R_ADD       = 11'b10001011000,
+    OPC_R_SUB       = 11'b11001011000,
+    OPC_R_AND       = 11'b10001010000,
+    OPC_R_ORR       = 11'b10101010000,
+    OPC_R_MUL       = 11'b10011011000,
+    OPC_R_SDIV      = 11'b10011010110,
 
+    OPC_D_LDUR      = 11'b11111000010,
+    OPC_D_STUR      = 11'b11111000000,
+    OPC_D_STURB     = 11'b00111000000,
+    OPC_D_LDURB     = 11'b00111000010,
+    OPC_D_STURH     = 11'b01111000000,
+    OPC_D_LDURH     = 11'b01111000010,
+    OPC_D_STURW     = 11'b10111000000,
+    OPC_D_LDURSW    = 11'b10111000100,
+    OPC_D_STXR      = 11'b11001000000,
+    OPC_D_LDXR      = 11'b11001000010,
 
+    OPC_I_ADDI      = 11'b1001000100?,
+    OPC_I_ANDI      = 11'b1001001000?,
+    OPC_I_ORRI      = 11'b1011001000?,
+    OPC_I_SUBI      = 11'b1101000100?,
+    OPC_I_ADDIS     = 11'b1011000100?,
+    OPC_I_EORI      = 11'b1101001000?,
+    OPC_I_SUBIS     = 11'b1111000100?,
+    OPC_I_ANDIS     = 11'b1111001000?,
+
+    OPC_CB_CBZ      = 11'b10110100???,
+    OPC_CB_CBNZ     = 11'b10110101???,
+    OPC_CB_BCOND    = 11'b01010100???,
+
+    OPC_B_B         = 11'b000101?????,
+
+    SHAMT_ADD       = 6'b000000,
+    SHAMT_SUB       = 6'b000000,
+    SHAMT_AND       = 6'b000000,
+    SHAMT_ORR       = 6'b000000,
+    SHAMT_MUL       = 6'b011111,
+    SHAMT_SDIV      = 6'b000010,
 
 /* ADDRESS  *****************************************************************************************************/
 

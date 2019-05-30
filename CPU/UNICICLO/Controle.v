@@ -72,19 +72,21 @@ module Control_UNI(
     output          oReg2Loc, oBranch, oMemRead, oMemWrite, oMemToReg, oRegWrite
 );
 
-always (*)
+always @(*)
     case (iOPCODE)
         
         default:
-            oOrigAULA   = 0;
-            oOrigBULA   = 0;
-            oALUop      = OPNULL;
-            oReg2Loc    = 0;
-            oBranch     = 0;
-            oMemRead    = 0;
-            oMemWrite   = 0;
-            oMemToReg   = 0;
-            oRegWrite   = 0;
+				begin
+					oOrigAULA   <= 0;
+					oOrigBULA   <= 0;
+					oALUop      <= OPNULL;
+					oReg2Loc    <= 0;
+					oBranch     <= 0;
+					oMemRead    <= 0;
+					oMemWrite   <= 0;
+					oMemToReg   <= 0;
+					oRegWrite   <= 0;
+				end
     endcase
 
 endmodule

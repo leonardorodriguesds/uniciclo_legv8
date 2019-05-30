@@ -62,7 +62,7 @@ wire [31:0] wInstr;                 // Instrução
 // ULA
 wire [4:0]  wCALUControl, wULAzero; // Sinal para controle da ULA e retorno do sinal ZERO.
 wire [31:0] wA_ULA, wB_ULA;         // Entrada A e B para a ULA, respectivamente.
-wire [31:0] wALUresult              // Retorno do resultado da ULA.
+wire [31:0] wALUresult;             // Retorno do resultado da ULA.
 
 // UNICICLO Controle
 wire [1:0]  wCOrigPC;               // Controle do mutiplexador da pŕoxima instrução.
@@ -102,10 +102,10 @@ ALU ALU_INT (
     .oZero(wULAzero)
 );
 /*-------------------[EXTENSOR DE SINAL]-------------------*/
-SIGNAL_EXTENDER ALU_INT (
+/* SIGNAL_EXTENDER ALU_INT (
     .iInstr(wInstr),
     .oImediate(wImmediate),
-);
+); */
 /*-------------------[MULTIPLEXADORES]-------------------*/
 always @(*) 
     case (wCBranch & wULAzero)

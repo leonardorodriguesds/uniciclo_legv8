@@ -25,7 +25,7 @@ always @(*)
     begin
         casez (opcode)
             /*
-                É IMPORTANTE MANTER POR ORDEM DECRESCENTE DE DON'T CARE,
+                É IMPORTANTE MANTER POR ORDEM CRESCENTE DE DON'T CARE,
                 OU POR ORDEM DECRESCENTE DE NÚMEROS DE BITS NO OPCODE;
             */
             OPC_D_LDUR,
@@ -37,7 +37,9 @@ always @(*)
             OPC_D_STURW,
             OPC_D_LDURSW,
             OPC_D_STXR,
-            OPC_D_LDXR:
+            OPC_D_LDXR,
+            OPC_D_LDURD,
+            OPC_D_STURD:
                 oImmediateExtended <= {{55{D_immediate[8]}}, D_immediate};
             
             OPC_I_ADDI,

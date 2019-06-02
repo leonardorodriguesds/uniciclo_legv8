@@ -39,7 +39,7 @@ Leonardo Rodrigues de Souza 				- 17/0060543
 parameter
     ON          = 1'b1,
     OFF         = 1'b0,
-    ZERO        = 32'h00000000,	 
+    ZERO        = 64'h0000000000000000,	 
 	 
 /* Operacoes da ULA */
 	OPAND		= 5'd0,
@@ -99,6 +99,7 @@ parameter
     OPC_R_REM       = 11'b10011010100,
     OPC_R_REMU      = 11'b10011010111,
     OPC_R_EOR       = 11'b11001010000,
+    OPC_R_BR        = 11'b11010110000,
 
     OPC_D_LDUR      = 11'b11111000010,
     OPC_D_STUR      = 11'b11111000000,
@@ -127,6 +128,7 @@ parameter
     OPC_CB_BCOND    = 11'b01010100???,
 
     OPC_B_B         = 11'b000101?????,
+    OPC_B_BL        = 11'b100101?????,
 
     SHAMT_ADD       = 6'b000000,
     SHAMT_SUB       = 6'b000000,
@@ -138,16 +140,18 @@ parameter
 /* ADDRESS  *****************************************************************************************************/
 
     BEGINNING_TEXT      = 32'h0040_0000,
-	 TEXT_WIDTH				= 14+2,					// 16384 words = 16384x4 = 64ki bytes	 
+	TEXT_WIDTH				= 14+2,					// 16384 words = 16384x4 = 64ki bytes	 
     END_TEXT            = (BEGINNING_TEXT + 2**TEXT_WIDTH) - 1,	 
 
 	 
     BEGINNING_DATA      = 32'h1001_0000,
-	 DATA_WIDTH				= 15+2,					// 32768 words = 32768x4 = 128ki bytes
+	DATA_WIDTH				= 15+2,					// 32768 words = 32768x4 = 128ki bytes
     END_DATA            = (BEGINNING_DATA + 2**DATA_WIDTH) - 1,	 
 
 
-	 STACK_ADDRESS       = END_DATA-3,
+	STACK_ADDRESS       = END_DATA-3,
+    STACK_REG           = 5'd28,
+    ZERO_REG            = 5'd31,
 
 
 //    BEGINNING_KTEXT     = 32'h8000_0000,

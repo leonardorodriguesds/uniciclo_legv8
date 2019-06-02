@@ -19,7 +19,7 @@ assign I_immediate      = iInstr[21:10];
 assign D_immediate      = iInstr[20:12];
 assign B_immediate      = iInstr[25:0];
 assign CB_immediate     = iInstr[23:5];
-assign IW_immediate     = iInstr[20:5];
+// assign IW_immediate     = iInstr[20:5];
 
 always @(*)
     begin

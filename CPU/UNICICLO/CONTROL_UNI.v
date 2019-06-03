@@ -37,7 +37,7 @@ module CONTROL_UNI(
     input  [10:0]   iOPCODE, 
     // ULA
     output    	 	oOrigAULA, oOrigBULA,
-    output [4:0]    oALUop,
+	output [1:0]    oALUop,
 
     output          oReg2Loc, oBranch, oMemRead, oMemWrite, oMemToReg, oRegWrite
 );

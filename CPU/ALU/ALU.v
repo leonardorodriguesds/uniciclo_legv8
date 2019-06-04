@@ -14,7 +14,7 @@ module ALU (
 	input logic signed  [63:0] iA, 
 	input logic signed  [63:0] iB,
 	output logic		[63:0] oResult,
-	output logic      oZero
+	output logic      oZero, oflagN, oflagZ, oflagV, oflagC
 );
 
 //	wire [4:0] iControl=OPMUL;		// Usado para as análises individuais

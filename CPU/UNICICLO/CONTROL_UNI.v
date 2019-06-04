@@ -25,9 +25,13 @@
     [=] 1'b0 <= Seleciona o dado de saída da ULA
     [=] 1'b1 <= Seleciona o dado lido da memória de dados
 
+    oBranch (Controle de Branch, condicional ou incondicional)
+    [=] 2'b00 <= Não é um Branch
+    [=] 2'b01 <= Branch incondicional
+    [=] 2'b10 <= Branch condicional 
+
     Sinais de controle
     oRegWrite   <= Desativa/Ativa escrita no banco de registradores
-    oBranch     <= Controle se é ou não um Branch
     oALUop      <= Controle da operação da ULA
     oMemRead    <= Controla a leitura da memória
     oMemWrite   <= Desativa/Ativa a escrita na memória
@@ -37,9 +41,9 @@ module CONTROL_UNI(
     input  [10:0]   iOPCODE, 
     // ULA
     output    	 	oOrigAULA, oOrigBULA,
-	output [1:0]    oALUop,
+	output [1:0]    oALUop, oBranch,
 
-    output          oReg2Loc, oBranch, oMemRead, oMemWrite, oMemToReg, oRegWrite
+    output          oReg2Loc, oMemRead, oMemWrite, oMemToReg, oRegWrite
 );
 
 always @(*)
@@ -51,7 +55,7 @@ always @(*)
                 oOrigBULA   <= 0;
                 oALUop      <= 2'b10;
                 oReg2Loc    <= 0;
-                oBranch     <= 0;
+                oBranch     <= 2'b00;
                 oMemRead    <= 0;
                 oMemWrite   <= 0;
                 oMemToReg   <= 0;
@@ -64,7 +68,7 @@ always @(*)
                 oOrigBULA   <= 1;
                 oALUop      <= 2'b0;
                 oReg2Loc    <= 0;
-                oBranch     <= 0;
+                oBranch     <= 2'b00;
                 oMemRead    <= 1;
                 oMemWrite   <= 0;
                 oMemToReg   <= 1;
@@ -77,7 +81,7 @@ always @(*)
                 oOrigBULA   <= 1;
                 oALUop      <= 2'b0;
                 oReg2Loc    <= 0;
-                oBranch     <= 0;
+                oBranch     <= 2'b00;
                 oMemRead    <= 0;
                 oMemWrite   <= 1;
                 oMemToReg   <= 0;
@@ -91,7 +95,7 @@ always @(*)
                 oOrigBULA   <= 1;
                 oALUop      <= 2'b10;
                 oReg2Loc    <= 0;
-                oBranch     <= 0;
+                oBranch     <= 2'b00;
                 oMemRead    <= 0;
                 oMemWrite   <= 0;
                 oMemToReg   <= 0;
@@ -104,7 +108,20 @@ always @(*)
                 oOrigBULA   <= 0;
                 oALUop      <= 2'b01;
                 oReg2Loc    <= 0;
-                oBranch     <= 1;
+                oBranch     <= 2'b01;
+                oMemRead    <= 0;
+                oMemWrite   <= 0;
+                oMemToReg   <= 0;
+                oRegWrite   <= 0;
+            end
+
+        OPC_CB_BCOND:
+            begin
+                oOrigAULA   <= 0;
+                oOrigBULA   <= 0;
+                oALUop      <= 2'b01;
+                oReg2Loc    <= 0;
+                oBranch     <= 2'b10;
                 oMemRead    <= 0;
                 oMemWrite   <= 0;
                 oMemToReg   <= 0;

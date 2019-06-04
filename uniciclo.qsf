@@ -58,9 +58,6 @@ set_global_assignment -name VERILOG_FILE CPU/ALU/ALU_CONTROL.v
 set_global_assignment -name VERILOG_FILE CPU/REGISTERS.v
 set_global_assignment -name VERILOG_FILE CPU/UNICICLO/DATAPATH_UNI.v
 set_global_assignment -name VERILOG_FILE CPU/UNICICLO/CONTROL_UNI.v
-set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
-set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
-set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
 set_instance_assignment -name VIRTUAL_PIN ON -to Decoder0
 set_instance_assignment -name VIRTUAL_PIN ON -to Equal0
 set_instance_assignment -name VIRTUAL_PIN ON -to Mux0
@@ -403,4 +400,12 @@ set_instance_assignment -name VIRTUAL_PIN ON -to "ALU:ALU_INT"
 set_instance_assignment -name VIRTUAL_PIN ON -to "CONTROL_UNI:CONTROL"
 set_instance_assignment -name VIRTUAL_PIN ON -to "REGISTERS:REG_INT"
 set_instance_assignment -name VIRTUAL_PIN ON -to "SIGNAL_EXTEND:SIGNAL_EXT"
+set_global_assignment -name VERILOG_FILE Memory/MEMSTORE.v
+set_global_assignment -name VERILOG_FILE Memory/MEMLOAD.v
+set_global_assignment -name VERILOG_FILE Memory/DATAMEMORY.v
+set_global_assignment -name VERILOG_FILE Memory/CODEMEMORY.v
+set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
+set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
+set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
+set_global_assignment -name VERILOG_FILE CPU/BRANCH.v
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

@@ -14,12 +14,12 @@ module DATAPATH_UNI (
     input  wire [31:0] iInitialPC,
 
     // Para monitoramento
-    output wire [31:0] mPC, mInstr,
 	input  wire 	   mULAorFPULA,
-    output wire [63:0] mRegDisp,
     input  wire [ 4:0] mRegDispSelect,
-    output wire [63:0] mDebug,	 
     input  wire [ 4:0] mVGASelect,
+    output wire [31:0] mPC, mInstr,
+    output wire [63:0] mRegDisp,
+    output wire [63:0] mDebug,	 
     output wire [63:0] mVGARead,
 	output wire [63:0] mRead1,
 	output wire [63:0] mRead2,
@@ -27,21 +27,25 @@ module DATAPATH_UNI (
 	output wire [63:0] mULA,	 
 
     //  Barramento de Dados
+    input  wire [63:0] DwReadData,
     output wire        DwReadEnable, DwWriteEnable,
-    output wire [ 3:0] DwByteEnable,
-    output wire [31:0] DwAddress, DwWriteData,
-    input  wire [31:0] DwReadData,
+    output wire [63:0] DwAddress, DwWriteData,
+    output wire [ 7:0] DwByteEnable,
 
     // Barramento de Instrucoes
-    output wire        IwReadEnable, IwWriteEnable,
+    input  wire [31:0] IwReadData,
     output wire [ 3:0] IwByteEnable,
-    output wire [31:0] IwAddress, IwWriteData,
-    input  wire [31:0] IwReadData
+    output wire        IwReadEnable, IwWriteEnable,
+    output wire [31:0] IwAddress, IwWriteData
 );
 
+reg  [31:0] PC;                     // Controle do endereço da instrução atual.
+initial
+	begin
+		PC         <= BEGINNING_TEXT;
+	end
 
-
-/*--------------------[REGISTRADORES E FIOS]--------------------*/
+/*-------------------------[FIOS]------------------------*/
 /*
     Para padronizar os nomes dos registradores e fios são aplicados:
         Nomes que inicial com 'w' indica que é um fio.
@@ -50,63 +54,95 @@ module DATAPATH_UNI (
 */				 
 
 // Instrução
-reg  [31:0] PC;                     // Controle do endereço da instrução atual.
 wire [31:0] wiPC;                   // Endereço da próxima instrução.
 wire [31:0] wPC, wPC4;              // Auxiliares para armazanar o PC atual, e o PC + 4, respectivamente.
 wire [10:0] wOPCODE;                // Pega o OPCODE da instrução.
 wire [63:0] wImmediate;             // Imeadiato com extensão de sinal
 wire [31:0] wInstr;                 // Instrução
+wire [4:0]  wCRegRM, wCRegRN, wCRegRD, wCRegRT;
 
 // ULA
 wire        wULAzero;
 wire [4:0]  wCALUControl;           // Sinal para controle da ULA e retorno do sinal ZERO.
 wire [63:0] wA_ULA, wB_ULA;         // Entrada A e B para a ULA, respectivamente.
 wire [63:0] wALUresult;             // Retorno do resultado da ULA.
+wire        wFlagN, wFlagZ, wFlagV, wFlagC;
 
 // FPULA
-wire [4:0]  wCFPALUControl;         // Sinal para controle da FPULA e retorno do sinal ZERO.
-wire [63:0] wA_FPULA, wB_FPULA;     // Entrada A e B para a FPULA, respectivamente.
+// wire [4:0]  wCFPALUControl;         // Sinal para controle da FPULA e retorno do sinal ZERO.
+// wire [63:0] wA_FPULA, wB_FPULA;     // Entrada A e B para a FPULA, respectivamente.
 wire [63:0] wFPALUresult;           // Retorno do resultado da FPULA.
 
 // UNICICLO Controle
-wire [1:0]  wCOrigPC;               // Controle do mutiplexador da pŕoxima instrução.
+wire [1:0]  wCOrigPC, wCBranch;     // Controle do mutiplexador da pŕoxima instrução e de Branch;
 wire        wCALUsrcA, wCALUsrcB;   // Fios de controle das entradas da ULA.
-wire        wCReg2Loc, wCBranch, wCMemRead, wCMemWrite, wCMemToReg, wCRegWrite;
+wire        wCReg2Loc, wCMemRead, wCMemWrite, wCMemToReg, wCRegWrite;
 wire [4:0]  wCALUop;                // Controle da operação da ULA.
 
 // Bancos de registradores
-wire [63:0] wReadRN, wReadRM, wRegWrite;
-wire [4:0]  wCRegRM, wCRegRN, wCRegRD, wCRegRT;
-wire [63:0] wFPReadRN, wFPReadRM, wFPRegWrite;
+wire [63:0] wRead1, wRead2, wRegWrite;
+wire [63:0] wFPRead1, wFPRead2, wFPRegWrite;
+wire [4:0]  wCReg1, wCReg2, wCReg3;
 
-// Memória
-wire [63:0] wMEMData;
+// Unidade de branch condicional
+wire        wCBranchCond;
 
 // Para monitoramento
 wire [63:0] wFPRegDisp, wRegDisp, wVGAFPRead, wVGARead;
+wire [ 4:0] wRegDispSelect, wVGASelect;
 
-assign wPC      = PC;               // Cria um auxiliar para PC.
-assign wPC4     = wPC + 32'd4;      // Define o valor de PC + 4.
-assign wOPCODE  = wPC[31:21];       // Atribui o OPCODE, pegando todas os possíveis opcodes.
+// Memória
+wire [63:0] wMEMData;
+wire [63:0] wMemDataWrite, wReadData;
+wire [63:0] wMemLoad;
+wire [ 7:0] wMemEnable;
 
-// Banco de registradores
-assign wCRegRM = mInstr[4:0];
-assign wCRegRN = mInstr[9:5];
-assign wCRegRM = mInstr[20:16];
-assign wCRegRT = mInstr[4:0];
+/*-----------[BARRAMENTO DA MEMÓRIA DE DADOS]------------*/
+assign DwReadEnable     = wCMemRead;
+assign DwWriteEnable    = wCMemWrite;
+assign DwWriteData      = wMemDataWrite;
+assign wReadData        = DwReadData;
+assign DwAddress        = wALUresult;
+assign DwByteEnable     = wMemEnable;
 
+/*---------[BARRAMENTO DA MEMÓRIA DE INSTRUÇÕES]---------*/
+assign wPC              = PC;               // Cria um auxiliar para PC.
+assign wPC4             = wPC + 32'd4;      // Define o valor de PC + 4.
+assign IwReadEnable     = ON;
+assign IwWriteEnable    = OFF;
+assign IwAddress        = wPC;
+assign IwWriteData      = ZERO[31:0];
+assign IwByteEnable     = 4'b1111;
+assign wInstr           = IwReadData;
+assign wOPCODE          = wPC[31:21];       // Atribui o OPCODE, pegando todas os possíveis opcodes.
+
+/*---------[ATRIBUIÇÕES BANCO DE REGISTRADORES]----------*/
+assign wCRegRD          = wInstr[4:0];
+assign wCRegRN          = wInstr[9:5];
+assign wCRegRM          = wInstr[20:16];
+assign wCRegRT          = wInstr[4:0];
+assign wCReg1           = wCRegRN;
+assign wCReg3           = wCRegRD;
+
+// REMOVENDO WARNINGS DA FPULA FALTANDO
+assign wFPRead1         = ZERO;
+assign wFPRead2         = ZERO;
+assign wFPALUresult     = ZERO; 
+assign wFPRegDisp       = ZERO; 
+assign wVGAFPRead       = ZERO; 
+assign wFPRegWrite      = ZERO;
 /*---------------[SINAIS DE MONITORAMENTO]---------------*/
-assign mPC					= wPC; 
-assign mInstr				= wInstr;
-assign mRead1				= mULAorFPULA? wFPReadRN : wReadRN;
-assign mRead2				= mULAorFPULA? wFPReadRM : wReadRM;
-assign mRegWrite			= mULAorFPULA? wFPRegWrite : wRegWrite;
-assign mULA					= mULAorFPULA? wFPALUresult : wALUresult;
-assign mDebug				= 32'h000ACE10;	// Ligar onde for preciso	
-assign mRegDisp			    = mULAorFPULA? wFPRegDisp : wRegDisp;
-assign mVGARead			    = mULAorFPULA? wVGAFPRead : wVGARead;
-assign wRegDispSelect 	    = mRegDispSelect;
-assign wVGASelect 		    = mVGASelect;
+assign mPC			    = wPC; 
+assign mInstr			= wInstr;
+assign mRead1			= mULAorFPULA? wFPRead1 : wRead1;
+assign mRead2			= mULAorFPULA? wFPRead2 : wRead2;
+assign mRegWrite		= mULAorFPULA? wFPRegWrite : wRegWrite;
+assign mULA				= mULAorFPULA? wFPALUresult : wALUresult;
+assign mDebug			= 32'h000ACE10;	// Ligar onde for preciso	
+assign mRegDisp		    = mULAorFPULA? wFPRegDisp : wRegDisp;
+assign mVGARead		    = mULAorFPULA? wVGAFPRead : wVGARead;
+assign wRegDispSelect   = mRegDispSelect;
+assign wVGASelect 	    = mVGASelect;
 
 /*-------------------[CONTROLE]-------------------*/
 CONTROL_UNI CONTROL (
@@ -121,26 +157,29 @@ CONTROL_UNI CONTROL (
     .oRegWrite(wCRegWrite),
     .oALUop(wCALUop)
 );
+/*-------------------[MEMÓRIA]-------------------*/
+MEMSTORE MEMSTORE0 (
+    .iOpcode(wOPCODE),
+    .iData(wMEMData),
+    .oData(wMemDataWrite),
+    .oByteEnable(wMemEnable)
+);
+MEMLOAD MEMLOAD0 (
+    .iOpcode(wOPCODE),
+    .iData(wReadData),
+    .oData(wMemLoad)
+);
 /*---------[BANCO DE REGISTRADORES]----------*/
-/* 
-    input wire 			iCLK, iRST, iRegWrite,
-    input wire  [4:0] 	iReadRegister1, iReadRegister2, iWriteRegister,
-    input wire  [63:0] 	iWriteData,
-    output wire [63:0] 	oReadData1, oReadData2,
-    // Controle para monitoramento
-    input wire  [4:0] 	iVGASelect, iRegDispSelect,
-    output reg  [63:0] 	oVGARead, oRegDisp;
-*/
 REGISTERS REG_INT (
     .iCLK(iCLK),
     .iRST(iRST),
     .iRegWrite(wCRegWrite),
-    .iReadRegister1(wCRegRN),
-    .iReadRegister2(wCRegRM),
-    .iWriteRegister(wCRegRD),
+    .iReadRegister1(wCReg1),
+    .iReadRegister2(wCReg2),
+    .iWriteRegister(wCReg3),
     .iWriteData(wRegWrite),
-    .oReadData1(wReadRN),
-    .oReadData2(wReadRM),
+    .oReadData1(wRead1),
+    .oReadData2(wRead2),
     
     .iVGASelect(wVGASelect),
     .iRegDispSelect(wRegDispSelect),
@@ -159,25 +198,104 @@ ALU ALU_INT (
     .iA(wA_ULA),
     .iB(wB_ULA),
     .oResult(wALUresult),
-    .oZero(wULAzero)
+    .oZero(wULAzero),
+    .oflagN(wFlagN),
+    .oflagZ(wFlagZ),
+    .oflagV(wFlagV),
+    .oflagC(wFlagC)
 );
 /*-------------------[EXTENSOR DE SINAL]-------------------*/
 SIGNAL_EXTEND SIGNAL_EXT (
     .iInstr(wInstr),
-    .oImmediateExtended(wImmediate),
+    .oImmediateExtended(wImmediate)
 );
-
+/*------------[UNIDADE DE BRANCH CONDICIONAL]-------------*/
+BRANCH COND_BRANCH (
+    .iCondition(wCRegRT),
+    .iFlagN(wFlagN),
+    .iFlagZ(wFlagZ), 
+    .iFlagV(wFlagV),
+    .iFlagC(wFlagC),
+    .oTakeBranch(wCBranchCond)
+);
 /*-------------------[MULTIPLEXADORES]-------------------*/
+/* CONTROLE MUX's:
+    Descrição do controle do multiplexadores.
+    oReg2Loc (Selecione entre RM e RD para entrada da leitura do 2 reg)
+    [=] 1'b0 <= Seleciona RM
+    [=] 1'b1 <= Seleciona RD
+
+    oOrigAULA (Seleciona a origem A da ULA)
+    [=] 1'b0 <= Seleciona o dado do registrador 1
+    [=] 1'b1 <= Reservado para o controle de FPREAD
+
+    oOrigBULA (Seleciona a origem B da ULA)
+    [=] 1'b0 <= Seleciona o dado do registrador 2
+    [=] 1'b1 <= Seleciona o imediato com sinal extendido
+
+    oMemToReg (Controle o reg para entrada de dados no banco de registradores)
+    [=] 1'b0 <= Seleciona o dado de saída da ULA
+    [=] 1'b1 <= Seleciona o dado lido da memória de dados
+
+    oBranch (Controle de Branch, condicional ou incondicional)
+    [=] 2'b00 <= Não é um Branch
+    [=] 2'b01 <= Branch incondicional
+    [=] 2'b10 <= Branch condicional 
+
+    Sinais de controle
+    oRegWrite   <= Desativa/Ativa escrita no banco de registradores
+    oALUop      <= Controle da operação da ULA
+    oMemRead    <= Controla a leitura da memória
+    oMemWrite   <= Desativa/Ativa a escrita na memória
+*/
 always @(*) 
-    case (wCBranch & wULAzero)
-        /*
-        Multiplexador para controle do PC:
-            wiPC = Controle do PC::
-                [0] = PC + 4;
-                [1] = Shifita o Imediato em 2x, e soma com PC;
-        */
-        1'b0:       wiPC <= wPC4;
-        1'b1:       wiPC <= {wImmediate[29:0], 2'b00} + wPC;
+    case (wCReg2Loc)
+        1'b1:   wCReg2  <= wCRegRD;
+        default:
+            wCReg2      <= wCRegRM;
+    endcase
+
+always @(*)
+    case (wCALUsrcA)
+        1'b0: wA_ULA    <= wRead1;
+        default:
+            wA_ULA      <= wRead1;
+    endcase
+
+always @(*)
+    case (wCALUsrcB)
+        1'b1: wB_ULA    <= wImmediate;
+        default:
+            wB_ULA      <= wRead2;
+    endcase
+
+always @(*)
+    case (wCMemToReg)
+        1'b1: wRegWrite <= wMemLoad;
+        default:
+            wRegWrite   <= wALUresult;
+    endcase
+
+always @(*)
+    case (wCBranch)
+        2'b01:
+            begin
+                case (wULAzero)
+                    1'b1: wiPC <= {wImmediate[29:0], 2'b00} + wPC;
+                    default:
+                        wiPC <= wPC4;
+                endcase
+            end
+        2'b10:
+            begin
+                case (wCBranchCond)
+                    1'b1: wiPC <= {wImmediate[29:0], 2'b00} + wPC;
+                    default:
+                        wiPC <= wPC4;
+                endcase
+            end
+        default:
+            wiPC <= wPC4;
     endcase
 
 /*-------------------------------------------------------*/
@@ -189,5 +307,5 @@ always @(posedge iCLK or posedge iRST)
         else
                 PC	<= wiPC;            // Atualiza PC com o endereço da próxima instrução
     end
-
+/*-------------------------------------------------------*/
 endmodule

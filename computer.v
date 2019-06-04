@@ -151,30 +151,5 @@ Break_Interface  break0 (
     .wAddress(DAddress), 
 	.wWriteData(DWriteData), 
 	.wReadData(DReadData)
-);											
-/*-----------------------[VGA INTERFACE]-----------------------*/
-VGA_Interface VGA0 (
-    .CLK(CLK), 
-	.iCLK_50(oCLK_50),
-	.iCLK2_50(CLOCK2_50), 
-	.iRST(Reset),
-	.oVGA_CLK(VGA_CLK),
-    .oVGA_HS(VGA_HS), 
-	.oVGA_VS(VGA_VS), 
-	.oVGA_BLANK_N(VGA_BLANK_N), 
-	.oVGA_SYNC_N(VGA_SYNC_N),
-    .oVGA_R(VGA_R), 
-	.oVGA_G(VGA_G), 
-	.oVGA_B(VGA_B),
-    .oVGASelect(wVGASelectIn),
-    .iVGARead(wVGAReadIn),
-    .iDebugEnable(iSW),
-    // Barramento
-    .wReadEnable(DReadEnable), 
-	.wWriteEnable(DWriteEnable),
-    .wByteEnable(DByteEnable),
-    .wAddress(DAddress), 
-	.wWriteData(DWriteData), 
-	.wReadData(DReadData)
 );
 endmodule

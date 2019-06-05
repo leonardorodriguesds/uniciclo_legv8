@@ -5,7 +5,7 @@
 module DATAMEMORY (
     input wire      			iCLK, iCLKMem,
     input wire       	 	    wReadEnable, wWriteEnable,
-    input wire		[3:0]  	    wByteEnable,
+    input wire		[7:0]  	    wByteEnable,
     input wire		[63:0] 	    wAddress, wWriteData,
     output logic	[63:0] 	    wReadData
 );

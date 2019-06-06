@@ -14,7 +14,6 @@ module DATAPATH_UNI (
     input  wire [31:0] iInitialPC,
 
     // Para monitoramento
-	input  wire 	   mULAorFPULA,
     input  wire [ 4:0] mRegDispSelect,
     input  wire [ 4:0] mVGASelect,
     output wire [31:0] mPC, mInstr,
@@ -66,22 +65,16 @@ wire        wULAzero;
 wire [4:0]  wCALUControl;           // Sinal para controle da ULA e retorno do sinal ZERO.
 wire [63:0] wA_ULA, wB_ULA;         // Entrada A e B para a ULA, respectivamente.
 wire [63:0] wALUresult;             // Retorno do resultado da ULA.
-wire        wFlagN, wFlagZ, wFlagV, wFlagC;
-
-// FPULA
-// wire [4:0]  wCFPALUControl;         // Sinal para controle da FPULA e retorno do sinal ZERO.
-// wire [63:0] wA_FPULA, wB_FPULA;     // Entrada A e B para a FPULA, respectivamente.
-wire [63:0] wFPALUresult;           // Retorno do resultado da FPULA.
+// wire        wFlagN, wFlagZ, wFlagV, wFlagC;
 
 // UNICICLO Controle
 wire [1:0]  wCOrigPC, wCBranch;     // Controle do mutiplexador da pŕoxima instrução e de Branch;
 wire        wCALUsrcA, wCALUsrcB;   // Fios de controle das entradas da ULA.
 wire        wCReg2Loc, wCMemRead, wCMemWrite, wCMemToReg, wCRegWrite;
-wire [4:0]  wCALUop;                // Controle da operação da ULA.
+wire [1:0]  wCALUop;                // Controle da operação da ULA.
 
 // Bancos de registradores
 wire [63:0] wRead1, wRead2, wRegWrite;
-wire [63:0] wFPRead1, wFPRead2, wFPRegWrite;
 wire [4:0]  wCReg1, wCReg2, wCReg3;
 
 // Unidade de branch condicional
@@ -124,23 +117,16 @@ assign wCRegRT          = wInstr[4:0];
 assign wCReg1           = wCRegRN;
 assign wCReg3           = wCRegRD;
 
-// REMOVENDO WARNINGS DA FPULA FALTANDO
-assign wFPRead1         = ZERO;
-assign wFPRead2         = ZERO;
-assign wFPALUresult     = ZERO; 
-assign wFPRegDisp       = ZERO; 
-assign wVGAFPRead       = ZERO; 
-assign wFPRegWrite      = ZERO;
 /*---------------[SINAIS DE MONITORAMENTO]---------------*/
 assign mPC			    = wPC; 
 assign mInstr			= wInstr;
-assign mRead1			= mULAorFPULA? wFPRead1 : wRead1;
-assign mRead2			= mULAorFPULA? wFPRead2 : wRead2;
-assign mRegWrite		= mULAorFPULA? wFPRegWrite : wRegWrite;
-assign mULA				= mULAorFPULA? wFPALUresult : wALUresult;
+assign mRead1			= wRead1;
+assign mRead2			= wRead2;
+assign mRegWrite		= wRegWrite;
+assign mULA				= wALUresult;
 assign mDebug			= 32'h000ACE10;	// Ligar onde for preciso	
-assign mRegDisp		    = mULAorFPULA? wFPRegDisp : wRegDisp;
-assign mVGARead		    = mULAorFPULA? wVGAFPRead : wVGARead;
+assign mRegDisp		    = wRegDisp;
+assign mVGARead		    = wVGARead;
 assign wRegDispSelect   = mRegDispSelect;
 assign wVGASelect 	    = mVGASelect;
 
@@ -199,10 +185,10 @@ ALU ALU_INT (
     .iB(wB_ULA),
     .oResult(wALUresult),
     .oZero(wULAzero),
-    .oflagN(wFlagN),
-    .oflagZ(wFlagZ),
-    .oflagV(wFlagV),
-    .oflagC(wFlagC)
+    .oflagN(),
+    .oflagZ(),
+    .oflagV(),
+    .oflagC()
 );
 /*-------------------[EXTENSOR DE SINAL]-------------------*/
 SIGNAL_EXTEND SIGNAL_EXT (
@@ -248,35 +234,44 @@ BRANCH COND_BRANCH (
     oMemRead    <= Controla a leitura da memória
     oMemWrite   <= Desativa/Ativa a escrita na memória
 */
-always @(*) 
-    case (wCReg2Loc)
-        1'b1:   wCReg2  <= wCRegRD;
-        default:
-            wCReg2      <= wCRegRM;
-    endcase
+always @(*)
+	begin 
+		 case (wCReg2Loc)
+			  1'b1:   wCReg2  <= wCRegRD;
+			  default:
+					wCReg2      <= wCRegRM;
+		 endcase
+	end
 
 always @(*)
-    case (wCALUsrcA)
-        1'b0: wA_ULA    <= wRead1;
-        default:
-            wA_ULA      <= wRead1;
-    endcase
+	begin
+		 case (wCALUsrcA)
+			  1'b0: wA_ULA    <= wRead1;
+			  default:
+					wA_ULA      <= wRead1;
+		 endcase
+	end
+	 
+always @(*)
+	begin
+		 case (wCALUsrcB)
+			  1'b1: wB_ULA    <= wImmediate;
+			  default:
+					wB_ULA      <= wRead2;
+		 endcase
+	end
 
 always @(*)
-    case (wCALUsrcB)
-        1'b1: wB_ULA    <= wImmediate;
-        default:
-            wB_ULA      <= wRead2;
-    endcase
-
-always @(*)
-    case (wCMemToReg)
-        1'b1: wRegWrite <= wMemLoad;
-        default:
-            wRegWrite   <= wALUresult;
-    endcase
-
-always @(*)
+	begin
+		 case (wCMemToReg)
+			  1'b1: wRegWrite <= wMemLoad;
+			  default:
+					wRegWrite   <= wALUresult;
+		 endcase
+	end
+	 
+/*always @(wCBranch)
+begin
     case (wCBranch)
         2'b01:
             begin
@@ -297,7 +292,7 @@ always @(*)
         default:
             wiPC <= wPC4;
     endcase
-
+end*/
 /*-------------------------------------------------------*/
 always @(posedge iCLK or posedge iRST)
     /* posedge iCLK => Para realizar a cada ciclo de CLOCK */

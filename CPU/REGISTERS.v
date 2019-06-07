@@ -1,5 +1,5 @@
 `ifndef PARAM
-	`include "../Parametros.v"
+    `include "../Parametros.v"
 `endif
 
 
@@ -18,14 +18,14 @@ reg [63:0] registers[31:0];
 reg [5:0] i;        // 6 bits para não dar warning
 
 initial
-	begin
+    begin
         /* 
             Resetando todos os registradores
         */
-		for (i = 0; i <= 31; i = i + 1'b1)
-			registers[i] = 63'b0;
-		registers[STACK_REG] = STACK_ADDRESS;
-	end
+        for (i = 0; i <= 31; i = i + 1'b1)
+            registers[i] = 63'b0;
+        registers[STACK_REG] = STACK_ADDRESS;
+    end
 
 
 // Para leitura

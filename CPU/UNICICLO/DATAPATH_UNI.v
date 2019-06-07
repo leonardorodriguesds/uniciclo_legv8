@@ -5,7 +5,7 @@ Leonardo Rodrigues de Souza - 2019/01 - 17/0060543
 */
 
 `ifndef PARAM
-	`include "../Parametros.v"
+    `include "../Parametros.v"
 `endif
 
 module DATAPATH_UNI (
@@ -21,10 +21,10 @@ module DATAPATH_UNI (
     output wire [63:0] mRegDisp,
     output wire [63:0] mDebug,	 
     output wire [63:0] mVGARead,
-	output wire [63:0] mRead1,
-	output wire [63:0] mRead2,
-	output wire [63:0] mRegWrite,
-	output wire [63:0] mULA,	 
+    output wire [63:0] mRead1,
+    output wire [63:0] mRead2,
+    output wire [63:0] mRegWrite,
+    output wire [63:0] mULA,	 
 
     //  Barramento de Dados
     input  wire [63:0] DwReadData,
@@ -41,9 +41,9 @@ module DATAPATH_UNI (
 
 reg  [63:0] PC;                     // Controle do endereço da instrução atual.
 initial
-	begin
-		PC         <= BEGINNING_TEXT;
-	end
+    begin
+        PC         <= BEGINNING_TEXT;
+    end
 
 /*-------------------------[FIOS]------------------------*/
 /*
@@ -71,14 +71,14 @@ wire [63:0] wALUresult;             // Retorno do resultado da ULA.
 wire        wFlagN, wFlagZ, wFlagV, wFlagC;
 
 // UNICICLO Controle
-wire [ 1:0]  wCOrigPC, wCBranch;     // Controle do mutiplexador da pŕoxima instrução e de Branch;
+wire [ 1:0] wCOrigPC, wCBranch;     // Controle do mutiplexador da pŕoxima instrução e de Branch;
 wire        wCALUsrcA, wCALUsrcB;   // Fios de controle das entradas da ULA.
 wire        wCReg2Loc, wCMemRead, wCMemWrite, wCMemToReg, wCRegWrite;
-wire [ 4:0]  wCALUop;                // Controle da operação da ULA.
+wire [ 4:0] wCALUop;                // Controle da operação da ULA.
 
 // Bancos de registradores
 wire [63:0] wRead1, wRead2, wRegWrite;
-wire [ 4:0]  wCReg1, wCReg2, wCReg3;
+wire [ 4:0] wCReg1, wCReg2, wCReg3;
 
 // Unidade de branch condicional
 wire        wCBranchCond;
@@ -121,17 +121,17 @@ assign wCRegRT          = wInstr[4:0];
 assign wCReg1           = wCRegRN;
 assign wCReg3           = wCRegRD;
 /*---------------[SINAIS DE MONITORAMENTO]---------------*/
-assign mPC			    = wPC; 
-assign mInstr			= wInstr;
-assign mRead1			= wRead1;
-assign mRead2			= wRead2;
-assign mRegWrite		= wRegWrite;
-assign mULA				= wALUresult;
-assign mDebug			= 32'h000ACE10;	// Ligar onde for preciso	
-assign mRegDisp		    = wRegDisp;
-assign mVGARead		    = wVGARead;
+assign mPC              = wPC; 
+assign mInstr           = wInstr;
+assign mRead1           = wRead1;
+assign mRead2           = wRead2;
+assign mRegWrite        = wRegWrite;
+assign mULA             = wALUresult;
+assign mDebug           = 32'h000ACE10;	// Ligar onde for preciso	
+assign mRegDisp         = wRegDisp;
+assign mVGARead         = wVGARead;
 assign wRegDispSelect   = mRegDispSelect;
-assign wVGASelect 	    = mVGASelect;
+assign wVGASelect       = mVGASelect;
 /*-------------------[CONTROLE]-------------------*/
 CONTROL_UNI CONTROL (
     .iOPCODE(wOPCODE),

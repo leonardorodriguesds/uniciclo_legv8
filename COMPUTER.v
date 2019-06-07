@@ -1,6 +1,6 @@
 /* Definicao do processador */
 `ifndef PARAM
-	`include "../Parametros.v"
+    `include "../Parametros.v"
 `endif
 
 module COMPUTER (
@@ -11,18 +11,18 @@ module COMPUTER (
     /*------- MONITORAMENTO -------*/
     input  wire [4:0]  mRegDispSelect,
     input  wire [4:0]  mVGASelect,
-	output wire [63:0] mPC, 
-	output wire [31:0] mInstr,
-	output wire [63:0] mDebug,
+    output wire [63:0] mPC, 
+    output wire [31:0] mInstr,
+    output wire [63:0] mDebug,
     output wire [63:0] mRegDisp,
     output wire [63:0] mVGARead,
-	output wire [63:0] mRead1,
-	output wire [63:0] mRead2,
-	output wire [63:0] mRegWrite,
-	output wire [63:0] mULA
-    output wire        mCLK, mCLKSelectFast, mCLKSelectAuto
+    output wire [63:0] mRead1,
+    output wire [63:0] mRead2,
+    output wire [63:0] mRegWrite,
+    output wire [63:0] mULA,
+    output wire        mCLK, mCLKSelectFast, mCLKSelectAuto,
     output wire        mDwReadEnable, mDwWriteEnable,
-    output wire        mIwReadEnable, mIwWriteEnable,
+    output wire        mIwReadEnable, mIwWriteEnable
 );
 
 /*------------------[FIOS E REGISTRADORES]------------------*/

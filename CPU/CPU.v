@@ -1,6 +1,6 @@
 /* Definicao do processador */
 `ifndef PARAM
-	`include "../Parametros.v"
+    `include "../Parametros.v"
 `endif
 
 
@@ -11,15 +11,15 @@ module CPU (
     /*------- MONITORAMENTO -------*/
     input  wire [4:0]  mRegDispSelect,
     input  wire [4:0]  mVGASelect,
-	output wire [63:0] mPC, 
-	output wire [31:0] mInstr,
-	output wire [63:0] mDebug,
+    output wire [63:0] mPC,
+    output wire [31:0] mInstr,
+    output wire [63:0] mDebug,
     output wire [63:0] mRegDisp,
     output wire [63:0] mVGARead,
-	output wire [63:0] mRead1,
-	output wire [63:0] mRead2,
-	output wire [63:0] mRegWrite,
-	output wire [63:0] mULA,	 
+    output wire [63:0] mRead1,
+    output wire [63:0] mRead2,
+    output wire [63:0] mRegWrite,
+    output wire [63:0] mULA,	 
 	 
     /*------- BARRAMENTO DE DADOS -------*/
     input  wire [63:0] DwReadData,
@@ -32,7 +32,7 @@ module CPU (
     input  wire [31:0] IwReadData,
     output wire        IwReadEnable, IwWriteEnable,
     output wire [3:0]  IwByteEnable,
-	output wire [63:0] IwAddress,
+    output wire [63:0] IwAddress,
     output wire [31:0] IwWriteData
 );
 
@@ -42,8 +42,8 @@ DATAPATH_UNI Processor (
     .iCLK50(iCLK50),
     .iRST(iRST),
     .iInitialPC(iInitialPC),
-	
-	/*------- MONITORAMENTO -------*/
+
+    /*------- MONITORAMENTO -------*/
     .mPC(mPC),
     .mInstr(mInstr),
     .mDebug(mDebug),
@@ -51,11 +51,11 @@ DATAPATH_UNI Processor (
     .mRegDisp(mRegDisp),
     .mVGASelect(mVGASelect),
     .mVGARead(mVGARead),
-	.mRead1(mRead1),
-	.mRead2(mRead2),
-	.mRegWrite(mRegWrite),
-	.mULA(mULA),
-	
+    .mRead1(mRead1),
+    .mRead2(mRead2),
+    .mRegWrite(mRegWrite),
+    .mULA(mULA),
+
     /*------- BARRAMENTO DE DADOS -------*/
     .DwReadEnable(DwReadEnable), 
     .DwWriteEnable(DwWriteEnable),
@@ -63,14 +63,14 @@ DATAPATH_UNI Processor (
     .DwWriteData(DwWriteData),
     .DwReadData(DwReadData),
     .DwAddress(DwAddress),
-	 
+        
     /*------- BARRAMENTO DE INSTRUÇOES -------*/
     .IwReadEnable(IwReadEnable), 
-	.IwWriteEnable(IwWriteEnable),
+    .IwWriteEnable(IwWriteEnable),
     .IwByteEnable(IwByteEnable),
     .IwWriteData(IwWriteData),
     .IwReadData(IwReadData),
-	.IwAddress(IwAddress)
+    .IwAddress(IwAddress)
 );
  `endif
  

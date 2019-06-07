@@ -1,9 +1,9 @@
 `ifndef PARAM
-	`include "../../Parametros.v"
+    `include "../../Parametros.v"
 `endif
  
 module ALU_CONTROL (
-	input [10:0]    iOPCODE,
+    input [10:0]    iOPCODE,
     input [ 5:0]    iShamt,
     input [1:0]     iALUop,
     output [4:0]    oALUControl

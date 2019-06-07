@@ -4,17 +4,17 @@
  */
  
 `ifndef PARAM
-	`include "../Parametros.v"
+    `include "../Parametros.v"
 `endif
  
  
  
 module ALU (
-	input logic 	    [4:0]  iControl,		// comentar para as análises individuais
-	input logic signed  [63:0] iA, 
-	input logic signed  [63:0] iB,
-	output logic		[63:0] oResult,
-	output logic        oZero, oflagN, oflagZ, oflagV, oflagC
+    input logic 	    [4:0]  iControl,		// comentar para as análises individuais
+    input logic signed  [63:0] iA, 
+    input logic signed  [63:0] iB,
+    output logic		[63:0] oResult,
+    output logic        oZero, oflagN, oflagZ, oflagV, oflagC
 );
 
 //	wire [4:0] iControl=OPMUL;		// Usado para as análises individuais
@@ -55,24 +55,24 @@ always @(*)
             OPLUI:
                 oResult  <= iB;
                 
-    `ifndef RV32I	//	Modulo de multiplicacao e divisao
-            OPMUL:
-                oResult  <= mul[63:0];
-            OPMULH:
-                oResult  <= mul[123:64];
-            OPMULHU:
-                oResult  <= mulu[123:64];
-            OPMULHSU:
-                oResult  <= mulsu[123:64];	
-            OPDIV:
-                oResult  <= iA / iB;
-            OPDIVU:
-                oResult  <= $unsigned(iA) / $unsigned(iB);
-            OPREM:
-                oResult  <= iA % iB;
-            OPREMU:
-                oResult  <= $unsigned(iA) % $unsigned(iB);		
-    `endif
+            `ifndef RV32I	//	Modulo de multiplicacao e divisao
+                OPMUL:
+                    oResult  <= mul[63:0];
+                OPMULH:
+                    oResult  <= mul[123:64];
+                OPMULHU:
+                    oResult  <= mulu[123:64];
+                OPMULHSU:
+                    oResult  <= mulsu[123:64];	
+                OPDIV:
+                    oResult  <= iA / iB;
+                OPDIVU:
+                    oResult  <= $unsigned(iA) / $unsigned(iB);
+                OPREM:
+                    oResult  <= iA % iB;
+                OPREMU:
+                    oResult  <= $unsigned(iA) % $unsigned(iB);		
+            `endif
 
             OPNULL:
                 oResult  <= ZERO;

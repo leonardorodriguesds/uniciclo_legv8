@@ -1,5 +1,5 @@
 /*
- TopDE
+TopDE
 Adaptado para a versão ARMS UNICICLO v0 por
 Leonardo Rodrigues de Souza         17/0060543
 
@@ -49,7 +49,7 @@ module TopDE (
     output      [6:0]  HEX3,
     output      [6:0]  HEX4,
     output      [6:0]  HEX5,
-	///////// KEY Push-Bottom /////////
+    ///////// KEY Push-Bottom /////////
     input       [3:0]  KEY,
 
     ///////// LEDR  LED Red/////////
@@ -57,14 +57,14 @@ module TopDE (
     
     // Monitoramento
     output wire [63:0] mPC, 
-	output wire [31:0] mInstr,
-	output wire [63:0] mDebug,
+    output wire [31:0] mInstr,
+    output wire [63:0] mDebug,
     output wire [63:0] mRegDisp,
     output wire [63:0] mVGARead,
-	output wire [63:0] mRead1,
-	output wire [63:0] mRead2,
-	output wire [63:0] mRegWrite,
-	output wire [63:0] mULA
+    output wire [63:0] mRead1,
+    output wire [63:0] mRead2,
+    output wire [63:0] mRegWrite,
+    output wire [63:0] mULA
     output wire        mCLK, mCLKSelectFast, mCLKSelectAuto
     output wire        mDwReadEnable, mDwWriteEnable,
     output wire        mIwReadEnable, mIwWriteEnable,
@@ -107,14 +107,14 @@ COMPUTER CPU(
     .mRegDispSelect(mRegDispSelect),
     .mVGASelect(mVGASelect),
     .mPC(mPC), 
-	.mInstr(mInstr),
-	.mDebug(mDebug),
+    .mInstr(mInstr),
+    .mDebug(mDebug),
     .mRegDisp(mRegDisp),
     .mVGARead(mVGARead),
-	.mRead1(mRead1),
-	.mRead2(mRead2),
-	.mRegWrite(mRegWrite),
-	.mULA(mULA),
+    .mRead1(mRead1),
+    .mRead2(mRead2),
+    .mRegWrite(mRegWrite),
+    .mULA(mULA),
     .mCLK(mCLK),
     .mCLKSelectFast(mCLKSelectFast),
     .mCLKSelectAuto(mCLKSelectAuto),
@@ -140,12 +140,12 @@ assign iSelect      = mCLKSelectAuto? iSelect : 2'b0;
 /*------------------[DISPLAY]------------------*/
 Display7_Interface Display70   (
     .HEX0_D(HEX0), 
-	.HEX1_D(HEX1), 
-	.HEX2_D(HEX2), 
-	.HEX3_D(HEX3), 
-	.HEX4_D(HEX4), 
-	.HEX5_D(HEX5), 
-	.iOutput(wOutput),
+    .HEX1_D(HEX1), 
+    .HEX2_D(HEX2), 
+    .HEX3_D(HEX3), 
+    .HEX4_D(HEX4), 
+    .HEX5_D(HEX5), 
+    .iOutput(wOutput),
     .iSelect(iSelect)
 );
 endmodule

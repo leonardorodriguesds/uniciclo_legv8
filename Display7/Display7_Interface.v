@@ -13,7 +13,7 @@ always @(*)
         2'b10:      wDisplay <= iOutput[63:32];
         2'b11:      wDisplay <= {iOutput[63:56], iOutput[16:0]};
         default:
-            2'b00:  wDisplay <= iOutput[23:0];
+            wDisplay <= iOutput[23:0];
     endcase
 
 Decoder7 Dec0 (

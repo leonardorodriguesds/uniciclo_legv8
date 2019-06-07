@@ -49,7 +49,7 @@ module CONTROL_UNI(
 always @(*)
     casez (iOPCODE)
         OPC_R_ADD, OPC_R_SUB, OPC_R_AND, OPC_R_ORR, OPC_R_MUL, OPC_R_SMULH, 
-        OPC_R_UMULH, OPC_R_MULHSU, OPC_R_SDIV, OPC_R_UDIV, OPC_R_REM, OPC_R_REMU, OPC_R_EOR:
+        OPC_R_UMULH, OPC_R_MULHSU, OPC_R_DIV, OPC_R_REM, OPC_R_REMU, OPC_R_EOR:
             begin
                 oOrigAULA   <= 0;
                 oOrigBULA   <= 0;

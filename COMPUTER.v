@@ -4,7 +4,7 @@
 `endif
 
 module COMPUTER (
-    input              CLOCK_50, iRST, iTimer, iCLKSelectAuto
+    input              CLOCK_50, iRST, iTimer, iCLKSelectAuto,
     input  wire [7:0]  iFdiv,
     input  wire [3:0]  iKEY,
     input  wire [9:0]  iSW,
@@ -21,8 +21,8 @@ module COMPUTER (
     output wire [63:0] mRegWrite,
     output wire [63:0] mULA,
     output wire        mCLK, mCLKSelectFast, mCLKSelectAuto,
-    output wire        mDwReadEnable, mDwWriteEnable,
-    output wire        mIwReadEnable, mIwWriteEnable
+    output wire        mDReadEnable, mDWriteEnable,
+    output wire        mIReadEnable, mIWriteEnable
 );
 
 /*------------------[FIOS E REGISTRADORES]------------------*/
@@ -53,12 +53,10 @@ wire [63:0] wVGAReadIn;
 assign wPCinicial = BEGINNING_TEXT;
 
 // Monitoramento
-assign wVGAReadIn       = mVGARead;
-assign mVGASelect       = wVGASelectIn;
 assign mCLK = CLK;
 assign mCLKSelectFast   = CLKSelectFast;
 assign mCLKSelectAuto   = CLKSelectAuto;
-assign mDwReadEnable    = DWriteEnable;
+assign mDWriteEnable    = DWriteEnable;
 assign mDReadEnable     = DReadEnable;
 assign mIWriteEnable    = IWriteEnable;
 assign mIReadEnable     = IReadEnable;

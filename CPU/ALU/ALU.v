@@ -28,6 +28,7 @@ module ALU (
 `endif
 
 wire msb;
+assign msb = iA[63] | iB[63];
 
 always @(*)
     begin
@@ -80,12 +81,11 @@ always @(*)
             default:
                 oResult  <= ZERO;
         endcase
-
-        assign msb          = {(iA[63] | iB[63]), oResult[63]};
-        assign oZero        = (oResult == ZERO);
-        assign oflagN       = oResult[31];
-        assign oflagV       = ({msb, oResult[63]} == 2’b01);
-        assign oflagC       = ({msb, oResult[63]} == 2’b10);
+		  
+        oZero        <= (oResult == ZERO);
+        oflagN       <= oResult[31];
+        oflagV       <= ({msb, oResult[63]} == 2'b01);
+        oflagC       <= ({msb, oResult[63]} == 2'b10);
     end
 
 endmodule

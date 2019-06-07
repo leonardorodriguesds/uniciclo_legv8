@@ -33,7 +33,8 @@ module DATAPATH_UNI (
     output wire [ 7:0] DwByteEnable,
 
     // Barramento de Instrucoes
-    input  wire [31:0] IwReadData, IwWriteData
+    input  wire [31:0] IwReadData,
+	 output wire [31:0] IwWriteData,
     output wire [ 3:0] IwByteEnable,
     output wire        IwReadEnable, IwWriteEnable,
     output wire [63:0] IwAddress
@@ -107,7 +108,7 @@ assign wPC4             = wPC + 64'd4;      // Define o valor de PC + 4.
 assign IwReadEnable     = ON;
 assign IwWriteEnable    = OFF;
 assign IwAddress        = wPC;
-assign IwWriteData      = ZERO[31:0];
+assign IwWriteData      = 32'b0;
 assign IwByteEnable     = 8'b11111111;
 assign wInstr           = IwReadData;
 assign wOPCODE          = wPC[31:21];       // Atribui o OPCODE, pegando todas os possíveis opcodes.

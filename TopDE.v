@@ -34,9 +34,8 @@ CONTROLE DO DISPLAY:
 
 SAÍDA:
     LEDR[0]     = Clock da CPU;
-    LEDR[1]     = Sinal REGWRITE do Controle;
-    LEDR[2]     = Se está sendo usado o clock manual;
-    LEDR[3]     = Clock fast;
+    LEDR[1]     = Se está sendo usado o clock manual;
+    LEDR[2]     = Clock fast;
     LEDR[9:4]   = Representação binária do fator de divisão do clock;
 
 */
@@ -53,7 +52,13 @@ module TopDE (
     input       [3:0]  KEY,
 
     ///////// LEDR  LED Red/////////
+	 output      [9:0]  LEDR,
+	 
+	 ///////// SW /////////
     input       [9:0]  SW,
+	 
+	 ///////// LEDG /////////
+    output      [3:0]  LEDG,
     
     // Monitoramento
     output wire [63:0] mPC, 
@@ -64,25 +69,20 @@ module TopDE (
     output wire [63:0] mRead1,
     output wire [63:0] mRead2,
     output wire [63:0] mRegWrite,
-    output wire [63:0] mULA
-    output wire        mCLK, mCLKSelectFast, mCLKSelectAuto
+    output wire [63:0] mULA,
+    output wire        mCLK, mCLKSelectFast, mCLKSelectAuto,
     output wire        mDwReadEnable, mDwWriteEnable,
-    output wire        mIwReadEnable, mIwWriteEnable,
+    output wire        mIwReadEnable, mIwWriteEnable
 );
+
+wire [ 4:0] mRegDispSelect, mVGASelect;
 
 wire [ 7:0] wFdiv;
 wire        wRST;
 
-// Fios de monitoramento
-wire [63:0] mPC, mDebug, mRegDisp, mVGARead, mRead1, mRead2, mRegWrite, mULA;
-wire [31:0] mInstr;
-wire [ 4:0] mRegDispSelect, mVGASelect;
-wire        mCLK, mCLKSelectFast, mCLKSelectAuto;
-wire        mDwReadEnable, mDwWriteEnable, mIwReadEnable, mIwWriteEnable;
-
 // Controle do display
 wire [63:0] wOutput;
-wire [ 1:0] iSelect;
+wire [ 1:0] iSelect, wSelect;
 
 assign wRST             = KEY[0];
 
@@ -90,9 +90,7 @@ assign mRegDispSelect   = SW[7:3];
 assign mVGASelect       = 5'b0;
 assign wFdiv            = {2'b0, SW[2:0], 3'b0};
 
-assign wCLKSelectAuto   = 1'b0;
-
-assign wOutput          = SW[9:8] == 2'b00 ? mInstr : SW[9:8] == 2'b01 ? mULA : SW[9:8] == 2'b10? mRead1 : mRegDisp;
+assign wOutput          = (SW[9:8] == 2'b00) ? mInstr : ((SW[9:8] == 2'b01)? mULA : ((SW[9:8] == 2'b10)? mRead1 : mRegDisp));
 assign iSelect          = 2'b00;
 /*------------------[COMPUTER]------------------*/
 COMPUTER CPU(
@@ -125,18 +123,18 @@ COMPUTER CPU(
 ); 
 /*------------------[LEDS]------------------*/
 assign LEDG[0]      = mCLK;
-assign LEDG[1]      = mRegWrite;
-assign LEDR[2]      = mCLKSelectAuto;
-assign LEDR[3]      = mCLKSelectFast;
+assign LEDR[1]      = mCLKSelectAuto;
+assign LEDR[2]      = mCLKSelectFast;
 assign LEDR[9:4]    = wFdiv;
 /*------------------[CONTROLE]------------------*/
-always @(mCLKSelectAuto and (posedge iKEY[1] or posedge iKEY[2] or posedge wRST))
+/*always @(posedge KEY[1] or posedge KEY[2] or posedge wRST)
     begin
-        if (wRST)           iSelect <= 2'b0;
-        else if (iKEY[1])   iSelect <= {iSelect[1], ~iSelect[0]};
-        else if (iKEY[2])   iSelect <= {~iSelect[1], iSelect[0]};
-    end
-assign iSelect      = mCLKSelectAuto? iSelect : 2'b0;
+        if (wRST || ~mCLKSelectAuto)
+				wSelect <= 2'b0;
+        else
+				wSelect <= KEY[1]? {iSelect[1], ~iSelect[0]} : {~iSelect[1], iSelect[0]};
+    end*/
+assign iSelect      = 2'b0;
 /*------------------[DISPLAY]------------------*/
 Display7_Interface Display70   (
     .HEX0_D(HEX0), 

@@ -66,14 +66,14 @@ assign mIReadEnable     = IReadEnable;
 CLOCK_Interface CLOCK0(
     .iRST(iRST),
     .iCLKSelectAuto(iCLKSelectAuto),    // Alterna entre clock automático ou manual
-	.iCLK_50(CLOCK_50),					// 50MHz
+    .iCLK_50(CLOCK_50),					// 50MHz
     .oCLK_50(oCLK_50),                  // 50MHz  <<  Que será usado em todos os dispositivos	 
     .oCLK_100(oCLK_100),                // 100MHz
-	.oCLK_150(oCLK_150),
+    .oCLK_150(oCLK_150),
     .oCLK_200(oCLK_200),                // 200MHz Usado no SignalTap II
-	.oCLK_25(oCLK_25),					// Usado na VGA
-	.oCLK_27(oCLK_27),
-	.oCLK_18(oCLK_18),					// Usado no Audio
+    .oCLK_25(oCLK_25),					// Usado na VGA
+    .oCLK_27(oCLK_27),
+    .oCLK_18(oCLK_18),					// Usado no Audio
     .CLK(CLK),                          // Clock da CPU
     .Reset(iCReset),                    // Reset de todos os dispositivos
     .CLKSelectFast(CLKSelectFast),      // Para visualização
@@ -81,31 +81,31 @@ CLOCK_Interface CLOCK0(
     .iKEY(iKEY),                        // controles dos clocks e reset
     .fdiv(iFdiv),                       // divisor da frequencia CLK = iCLK_50/fdiv
     .Timer(iTimer),                     // Timer de 10 segundos 
-	.iBreak(wBreak)						// Break Point
+    .iBreak(wBreak)						// Break Point
 );
 /*--------------------------[MEMÓRIA]--------------------------*/
 `ifndef MULTICICLO  // Uniciclo e Pipeline
 DataMemory_Interface MEMDATA(
     .iCLK(CLK), 
-	.iCLKMem(CLOCK_50), 
+    .iCLKMem(CLOCK_50), 
     // Barramento de dados
     .wReadEnable(DReadEnable), 
-	.wWriteEnable(DWriteEnable),
+    .wWriteEnable(DWriteEnable),
     .wByteEnable(DByteEnable),
     .wAddress(DAddress), 
-	.wWriteData(DWriteData), 
-	.wReadData(DReadData)
+    .wWriteData(DWriteData), 
+    .wReadData(DReadData)
 );
 CodeMemory_Interface MEMCODE(
     .iCLK(CLK), 
-	.iCLKMem(CLOCK_50),
+    .iCLKMem(CLOCK_50),
     // Barramento de Instrucoes
     .wReadEnable(IReadEnable), 
-	.wWriteEnable(IWriteEnable),
+    .wWriteEnable(IWriteEnable),
     .wByteEnable(IByteEnable),
     .wAddress(IAddress), 
-	.wWriteData(IWriteData), 
-	.wReadData(IReadData)
+    .wWriteData(IWriteData), 
+    .wReadData(IReadData)
 );
 `endif
 /*------------------------[PROCESSADOR]------------------------*/
@@ -117,19 +117,19 @@ CPU CPU0 (
 
     // Barramento Dados
     .DwReadEnable(DReadEnable), 
-	.DwWriteEnable(DWriteEnable),
+    .DwWriteEnable(DWriteEnable),
     .DwByteEnable(DByteEnable),
     .DwAddress(DAddress), 
-	.DwWriteData(DWriteData),
-	.DwReadData(DReadData),
+    .DwWriteData(DWriteData),
+    .DwReadData(DReadData),
 
     // Barramento Instrucoes
     .IwReadEnable(IReadEnable), 
-	.IwWriteEnable(IWriteEnable),
+    .IwWriteEnable(IWriteEnable),
     .IwByteEnable(IByteEnable),
     .IwAddress(IAddress), 
-	.IwWriteData(IWriteData), 
-	.IwReadData(IReadData),
+    .IwWriteData(IWriteData), 
+    .IwReadData(IReadData),
 
     // Sinais de monitoramento
     .mPC(mPC),
@@ -139,26 +139,26 @@ CPU CPU0 (
     .mRegDisp(mRegDisp),
     .mVGASelect(mVGASelect),
     .mVGARead(mVGARead),
-	.mRead1(mRead1),
-	.mRead2(mRead2),
-	.mRegWrite(mRegWrite),
-	.mULA(mULA)
+    .mRead1(mRead1),
+    .mRead2(mRead2),
+    .mRegWrite(mRegWrite),
+    .mULA(mULA)
 );
 
 /*----------------------[BREAK INTERFACE]----------------------*/
 Break_Interface  break0 (
     .iCLK_50(oCLK_50), 
-	.iCLK(CLK), 
-	.Reset(iCReset),
+    .iCLK(CLK), 
+    .Reset(iCReset),
     .oBreak(wBreak),
-	.iKEY(iKEY),
-	.iPC(mPC),
+    .iKEY(iKEY),
+    .iPC(mPC),
     //  Barramento Dados
     .wReadEnable(DReadEnable), 
-	.wWriteEnable(DWriteEnable),
+    .wWriteEnable(DWriteEnable),
     .wByteEnable(DByteEnable),
     .wAddress(DAddress), 
-	.wWriteData(DWriteData), 
-	.wReadData(DReadData)
+    .wWriteData(DWriteData), 
+    .wReadData(DReadData)
 );
 endmodule

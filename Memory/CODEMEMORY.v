@@ -5,15 +5,15 @@
 module CODEMEMORY (
     input wire    			iCLK, iCLKMem,
     input wire    			wReadEnable, wWriteEnable,
-    input wire  	[3:0]  	wByteEnable,
+    input wire  	[7:0]  	wByteEnable,
     input wire		[63:0] 	wAddress, wWriteData,
-    output logic 	[63:0] 	wReadData
+    output logic 	[31:0] 	wReadData
 );
 
 wire        wMemWriteMB0, wMemReadMB0;
 wire [31:0] wMemDataMB0;
 wire        is_usermem;
-wire [31:0] usermem_add;
+wire [63:0] usermem_add;
 
 UserCodeBlock MB0 (
     .address(usermem_add[TEXT_WIDTH-1:2]),
@@ -42,8 +42,8 @@ always @(*)
             if(is_usermem)
                 wReadData = wMemDataMB0; 
             else
-                wReadData = 64'hzzzzzzzzzzzzzzzz;
+                wReadData = 32'hzzzzzzzz;
         end
     else
-        wReadData = 64'hzzzzzzzzzzzzzzzz;
+        wReadData = 32'hzzzzzzzz;
 endmodule

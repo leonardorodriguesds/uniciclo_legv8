@@ -4,6 +4,7 @@
  
 module ALU_CONTROL (
 	input [10:0]    iOPCODE,
+    input [ 5:0]    iShamt,
     input [1:0]     iALUop,
     output [4:0]    oALUControl
 );
@@ -31,10 +32,16 @@ always @(*)
                         oALUControl <= OPMULHU;
                     OPC_R_MULHSU:
                         oALUControl <= OPMULHSU;
-                    OPC_R_SDIV:
-                        oALUControl <= OPDIV;
-                    OPC_R_UDIV:
-                        oALUControl <= OPDIVU;
+                    OPC_R_DIV:
+                        begin
+                            case (iShamt)
+                                SHAMT_SDIV: oALUControl <= OPDIV;
+                                SHAMT_UDIV: oALUControl <= OPDIVU;
+                                default:
+                                    oALUControl <= OPNULL;
+                            endcase
+                        end
+                    
                     OPC_R_REM:
                         oALUControl <= OPREM;
                     OPC_R_REMU:
@@ -56,11 +63,10 @@ always @(*)
                     OPC_I_EORI:
                         oALUControl <= OPXOR;
                     default:
-                        oALUControl <= FOPNULL;
+                        oALUControl <= OPNULL;
                 endcase
             end
         default:
-            oALUControl <= FOPNULL;
+            oALUControl <= OPNULL;
     endcase
-
 endmodule

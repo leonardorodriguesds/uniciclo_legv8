@@ -133,9 +133,9 @@ always @(*)
             begin
                 oOrigAULA   <= 0;
                 oOrigBULA   <= 0;
-                oALUop      <= OPNULL;
+                oALUop      <= 2'b11;
                 oReg2Loc    <= 0;
-                oBranch     <= 0;
+                oBranch     <= 2'b00;
                 oMemRead    <= 0;
                 oMemWrite   <= 0;
                 oMemToReg   <= 0;
